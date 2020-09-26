@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: laravel-mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci #设置utf8字符集
+    restart: always
+    ports:
+      - "3308:3306"  # host物理直接映射端口为6606
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456" # root管理员用户密码
+    networks:
+      - lnmp-network
+  redis:
+    image: redis:6.0.6
+    container_name: laravel-redis # 容器名
+    restart: always
+    ports:
+      - '6380:6379'
+    networks:
+      - lnmp-network
+  nginx:
+    image: nginx:latest
+    container_name: laravel-nginx # 容器名
+    restart: always
+    volumes:
+      - ./docker/nginx/conf:/etc/nginx/conf.d #把容器的conf.d映射到 ./nginx/conf.d
+      - ../blog:/usr/share/laravel7
+    ports:
+      - "8081:80"
+    depends_on:
+      - redis
+      - php
+      - mysql
+    networks:
+      - lnmp-network
+  php:
+    image: php:7.4-fpm-alpine
+    container_name: laravel-php # 容器名
+    restart: always
+    volumes:
+      - ../blog:/www
+    networks:
+      - lnmp-network
+networks:
+    lnmp-network:
