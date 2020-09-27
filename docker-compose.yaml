@@ -26,7 +26,7 @@ services:
     restart: always
     volumes:
       - ./docker/nginx/conf:/etc/nginx/conf.d #把容器的conf.d映射到 ./nginx/conf.d
-      - ../laravel-gupiao:/usr/share/laravel7
+      - ./:/usr/share/laravel7
     ports:
       - "8081:80"
     depends_on:
@@ -40,7 +40,7 @@ services:
     container_name: laravel-php # 容器名
     restart: always
     volumes:
-      - ../laravel-gupiao:/www
+      - ./:/www
     networks:
       - lnmp-network
 networks:
